@@ -46,6 +46,7 @@ type Config struct {
 type Module struct {
 	Name      string
 	Source    string
+	DependsOn []string
 	RawConfig *RawConfig
 }
 

@@ -225,6 +225,7 @@ func loadModulesHcl(os *hclobj.Object) ([]*Module, error) {
 
 		// Remove the fields we handle specially
 		delete(config, "source")
+		delete(config, "depends_on")
 
 		rawConfig, err := NewRawConfig(config)
 		if err != nil {
@@ -246,8 +247,21 @@ func loadModulesHcl(os *hclobj.Object) ([]*Module, error) {
 			}
 		}
 
+		// If we have depends fields, then add those in
+		var dependsOn []string
+		if o := obj.Get("depends_on", false); o != nil {
+			err := hcl.DecodeObject(&dependsOn, o)
+			if err != nil {
+				return nil, fmt.Errorf(
+					"Error reading depends_on for %s: %s",
+					k,
+					err)
+			}
+		}
+
 		result = append(result, &Module{
 			Name:      k,
+			DependsOn: dependsOn,
 			Source:    source,
 			RawConfig: rawConfig,
 		})

@@ -34,11 +34,18 @@ func (n *GraphNodeConfigModule) DependableName() []string {
 
 func (n *GraphNodeConfigModule) DependentOn() []string {
 	vars := n.Module.RawConfig.Variables
-	result := make([]string, 0, len(vars))
+	result := make([]string, 0, len(vars)+
+		len(n.Module.DependsOn)*2)
+
 	for _, v := range vars {
 		if vn := varNameForVar(v); vn != "" {
 			result = append(result, vn)
 		}
+	}
+
+	for _, v := range n.Module.DependsOn {
+		// if module.exists
+		result = append(result, v)
 	}
 
 	return result
