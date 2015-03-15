@@ -3,6 +3,7 @@ package terraform
 import (
 	"fmt"
 	"log"
+	"runtime/debug"
 	"strconv"
 
 	"github.com/hashicorp/go-multierror"
@@ -26,6 +27,9 @@ func (n *EvalApply) Eval(ctx EvalContext) (interface{}, error) {
 	diff := *n.Diff
 	provider := *n.Provider
 	state := *n.State
+
+	debug.PrintStack()
+	log.Printf("[DEBUG-11] Calling EvalApply.Eval on %s", n.Info.Id)
 
 	// If we have no diff, we have nothing to do!
 	if diff.Empty() {

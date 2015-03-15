@@ -264,7 +264,7 @@ func (d *ModuleDiff) String() string {
 // InstanceDiff is the diff of a resource from some state to another.
 type InstanceDiff struct {
 	Attributes     map[string]*ResourceAttrDiff
-	Destroy        bool
+	Destroy        bool // THIS is the decision maker!!! => need to track back who sets Destroy=true
 	DestroyTainted bool
 }
 

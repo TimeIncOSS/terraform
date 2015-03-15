@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform/config"
@@ -44,7 +45,7 @@ func (n *GraphNodeConfigModule) DependentOn() []string {
 	}
 
 	for _, v := range n.Module.DependsOn {
-		// if module.exists
+		// TODO: if module.exists
 		result = append(result, v)
 	}
 
@@ -388,8 +389,12 @@ func (n *graphNodeResourceDestroy) CreateNode() dag.Vertex {
 }
 
 func (n *graphNodeResourceDestroy) DestroyInclude(d *ModuleDiff, s *ModuleState) bool {
+	log.Printf("[DEBUG-9] Calling DestroyInclude on %#v", n.Resource.Name)
+	log.Printf("[DEBUG-9] ModuleState.Path = %#v", s.Path)
+	log.Printf("[DEBUG-9] ModuleState.Dependencies = %#v", s.Dependencies)
 	// Always include anything other than the primary destroy
 	if n.DestroyMode != DestroyPrimary {
+		log.Printf("[DEBUG-9] Returning TRUE because DestroyMode != primary")
 		return true
 	}
 
@@ -442,6 +447,7 @@ func (n *graphNodeResourceDestroy) DestroyInclude(d *ModuleDiff, s *ModuleState)
 	// as the cycle would already exist without this anyways.
 	count := n.Original.Resource.RawCount
 	if raw := count.Raw[count.Key]; raw != "1" {
+		log.Printf("[DEBUG-9] Returning TRUE because RawCount != 1")
 		return true
 	}
 
@@ -453,6 +459,7 @@ func (n *graphNodeResourceDestroy) DestroyInclude(d *ModuleDiff, s *ModuleState)
 	if d != nil {
 		for k, _ := range d.Resources {
 			if strings.HasPrefix(k, prefix) {
+				log.Printf("[DEBUG-9] Returning TRUE because it has prefix %s", prefix)
 				return true
 			}
 		}
@@ -462,21 +469,26 @@ func (n *graphNodeResourceDestroy) DestroyInclude(d *ModuleDiff, s *ModuleState)
 	// This does a prefix check so it will also catch orphans on count
 	// decreases to "1".
 	if s != nil {
+		log.Printf("[DEBUG-9] Iterating over s.Resources ...")
 		for k, v := range s.Resources {
 			if !strings.HasPrefix(k, prefix) {
+				log.Printf("[DEBUG-9] k (%s) does not have prefix (%s) ...", k, prefix)
 				continue
 			}
 
 			// Ignore exact matches and the 0'th index. We only care
 			// about if there is a decrease in count.
 			if k == prefix {
+				log.Printf("[DEBUG-9] k (%s) == prefix (%s) ...", k, prefix)
 				continue
 			}
 			if k == prefix+".0" {
+				log.Printf("[DEBUG-9] k (%s) == prefix.0 (%s) ...", k, prefix)
 				continue
 			}
 
 			if v.Primary != nil {
+				log.Printf("[DEBUG-9] v.Primary != nil, v = %#v ...", v)
 				return true
 			}
 		}
@@ -486,10 +498,11 @@ func (n *graphNodeResourceDestroy) DestroyInclude(d *ModuleDiff, s *ModuleState)
 		_, okOne := s.Resources[prefix]
 		_, okTwo := s.Resources[prefix+".0"]
 		if okOne && okTwo {
+			log.Printf("[DEBUG-9] okOne && okTwo, returning TRUE...")
 			return true
 		}
 	}
-
+	log.Printf("[DEBUG-9] Returning FALSE")
 	return false
 }
 

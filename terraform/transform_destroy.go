@@ -2,6 +2,7 @@ package terraform
 
 import (
 	"github.com/hashicorp/terraform/dag"
+	"log"
 )
 
 type GraphNodeDestroyMode byte
@@ -76,19 +77,42 @@ func (t *DestroyTransformer) Transform(g *Graph) error {
 
 func (t *DestroyTransformer) transform(
 	g *Graph, mode GraphNodeDestroyMode) ([]dag.Edge, []dag.Edge, error) {
+	if mode == DestroyPrimary {
+		log.Printf("[DEBUG-0] Calling DestroyTransformer.transform (mode = %#v)", "DestroyPrimary")
+	} else if mode == DestroyNone {
+		log.Printf("[DEBUG-0] Calling DestroyTransformer.transform (mode = %#v)", "DestroyNone")
+	} else if mode == DestroyTainted {
+		log.Printf("[DEBUG-0] Calling DestroyTransformer.transform (mode = %#v)", "DestroyTainted")
+	} else {
+		log.Printf("[DEBUG-0] Calling DestroyTransformer.transform (mode = %#v)", mode)
+	}
+
 	var connect, remove []dag.Edge
 	nodeToCn := make(map[dag.Vertex]dag.Vertex, len(g.Vertices()))
 	nodeToDn := make(map[dag.Vertex]dag.Vertex, len(g.Vertices()))
+
+	log.Printf("[DEBUG-1] Got %d vertices", len(g.Vertices()))
+
 	for _, v := range g.Vertices() {
+		vertexName := dag.VertexName(v)
+		log.Printf("[DEBUG-2] Walking over %v", vertexName)
 		// If it is not a destroyable, we don't care
 		cn, ok := v.(GraphNodeDestroyable)
 		if !ok {
+			log.Printf("[DEBUG-3] Vertice %v is NOT DESTROYABLE", vertexName)
 			continue
 		}
 
+		// log.Printf("[DEBUG-3] config node = %#v", cn)
+
 		// Grab the destroy side of the node and connect it through
+		// if vertexName == "aws_vpc.vpc (destroy)" {
+		// 	// HACK THIS shit
+		// 	continue
+		// }
 		n := cn.DestroyNode(mode)
 		if n == nil {
+			log.Printf("[DEBUG-4] Grabbing destroy-side of vertice %#v", vertexName)
 			continue
 		}
 
@@ -110,11 +134,15 @@ func (t *DestroyTransformer) transform(
 		connect = append(connect, dag.BasicEdge(v, n))
 	}
 
+	log.Printf("[DEBUG-5] Got nodeToCn: %#v", nodeToCn)
 	// Go through the nodes we added and determine if they depend
 	// on any nodes with a destroy node. If so, depend on that instead.
 	for n, _ := range nodeToCn {
 		for _, downRaw := range g.DownEdges(n).List() {
 			target := downRaw.(dag.Vertex)
+			provider := target.(*GraphNodeConfigProvider).Provider
+			log.Printf("[DEBUG-6] Target: %#v", provider)
+			log.Printf("[DEBUG-6] Provider config: %#v", provider.RawConfig)
 			cn2, ok := target.(GraphNodeDestroyable)
 			if !ok {
 				continue
@@ -132,7 +160,10 @@ func (t *DestroyTransformer) transform(
 			remove = append(remove, dag.BasicEdge(n, target))
 		}
 	}
+	log.Printf("[DEBUG-7] Returning connect: %#v", connect)
+	log.Printf("[DEBUG-7] Returning remove: %#v", remove)
 
+	// TODO: Track down LOG message "aws_vpc.vpc: Destroying..." and track back where does it decides about the final order
 	return connect, remove, nil
 }
 

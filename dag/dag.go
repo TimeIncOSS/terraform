@@ -2,6 +2,7 @@ package dag
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 
@@ -141,8 +142,11 @@ func (g *AcyclicGraph) Walk(cb WalkFunc) error {
 	// The map of whether a vertex errored or not during the walk
 	var errLock sync.Mutex
 	var errs error
+	log.Printf("[DEBUG-12] ---------------------------")
 	errMap := make(map[Vertex]bool)
 	for _, v := range vertices {
+		vertexName := VertexName(v)
+		log.Printf("[DEBUG-12] Walking over %v", vertexName)
 		// Build our list of dependencies and the list of channels to
 		// wait on until we start executing for this vertex.
 		depsRaw := g.DownEdges(v).List()
