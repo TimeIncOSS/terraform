@@ -43,6 +43,9 @@ updatedeps:
 		| sort -u \
 		| xargs go get -f -u -v
 
+brewformula:
+	go run ./brew-formula.go
+
 cover:
 	@go tool cover 2>/dev/null; if [ $$? -eq 3 ]; then \
 		go get -u golang.org/x/tools/cmd/cover; \
