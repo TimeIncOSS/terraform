@@ -128,6 +128,30 @@ func TestAccAWSEcsServiceWithFamilyAndRevision(t *testing.T) {
 	})
 }
 
+func TestAccAWSEcsServiceWithRenamedCluster(t *testing.T) {
+	// Regression test for #2427
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckAWSEcsServiceDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccAWSEcsServiceWithRenamedCluster,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSEcsServiceExists("aws_ecs_service.ghost"),
+				),
+			},
+
+			resource.TestStep{
+				Config: testAccAWSEcsServiceWithRenamedClusterModified,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSEcsServiceExists("aws_ecs_service.ghost"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckAWSEcsServiceDestroy(s *terraform.State) error {
 	conn := testAccProvider.Meta().(*AWSClient).ecsconn
 
@@ -271,6 +295,62 @@ resource "aws_ecs_service" "jenkins" {
   name = "jenkins"
   cluster = "${aws_ecs_cluster.default.id}"
   task_definition = "${aws_ecs_task_definition.jenkins.family}:${aws_ecs_task_definition.jenkins.revision}"
+  desired_count = 1
+}
+`
+
+var testAccAWSEcsServiceWithRenamedCluster = `
+resource "aws_ecs_cluster" "default" {
+	name = "terraformecstest3"
+}
+
+resource "aws_ecs_task_definition" "ghost" {
+  family = "ghost"
+  container_definitions = <<DEFINITION
+[
+  {
+    "cpu": 128,
+    "essential": true,
+    "image": "ghost:latest",
+    "memory": 128,
+    "name": "ghost"
+  }
+]
+DEFINITION
+}
+
+resource "aws_ecs_service" "ghost" {
+  name = "ghost"
+  cluster = "${aws_ecs_cluster.default.id}"
+  task_definition = "${aws_ecs_task_definition.ghost.family}:${aws_ecs_task_definition.ghost.revision}"
+  desired_count = 1
+}
+`
+
+var testAccAWSEcsServiceWithRenamedClusterModified = `
+resource "aws_ecs_cluster" "default" {
+	name = "terraformecstest3modified"
+}
+
+resource "aws_ecs_task_definition" "ghost" {
+  family = "ghost"
+  container_definitions = <<DEFINITION
+[
+  {
+    "cpu": 128,
+    "essential": true,
+    "image": "ghost:latest",
+    "memory": 128,
+    "name": "ghost"
+  }
+]
+DEFINITION
+}
+
+resource "aws_ecs_service" "ghost" {
+  name = "ghost"
+  cluster = "${aws_ecs_cluster.default.id}"
+  task_definition = "${aws_ecs_task_definition.ghost.family}:${aws_ecs_task_definition.ghost.revision}"
   desired_count = 1
 }
 `

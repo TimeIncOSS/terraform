@@ -2,9 +2,12 @@ package aws
 
 import (
 	"log"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -67,14 +70,36 @@ func resourceAwsEcsClusterDelete(d *schema.ResourceData, meta interface{}) error
 
 	log.Printf("[DEBUG] Deleting ECS cluster %s", d.Id())
 
+	// Retry if there are active services in cluster
+	wait := resource.StateChangeConf{
+		Pending:    []string{"ClusterContainsServicesException"},
+		Target:     "ResourceNotFoundException",
+		Timeout:    5 * time.Minute,
+		MinTimeout: 1 * time.Second,
+		Refresh: func() (interface{}, string, error) {
+			resp, err := conn.DeleteCluster(&ecs.DeleteClusterInput{
+				Cluster: aws.String(d.Id()),
+			})
+
+			if awsErr, ok := err.(awserr.Error); ok {
+				log.Printf("[DEBUG] Current error code: %q", awsErr.Code())
+				return resp, awsErr.Code(), nil
+			}
+
+			return nil, "Failed", err
+		},
+	}
+
+	out, err := wait.WaitForState()
+	if err != nil {
+		return err
+	}
+
 	// TODO: Handle ClientException: The Cluster cannot be deleted while Container Instances are active.
 	// TODO: Handle ClientException: The Cluster cannot be deleted while Services are active.
 
-	out, err := conn.DeleteCluster(&ecs.DeleteClusterInput{
-		Cluster: aws.String(d.Id()),
-	})
-
 	log.Printf("[DEBUG] ECS cluster %s deleted: %#v", d.Id(), out)
+	d.SetId("")
 
 	return err
 }
