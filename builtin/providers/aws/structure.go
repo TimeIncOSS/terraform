@@ -57,9 +57,13 @@ func expandEcsVolumes(configured []interface{}) ([]*ecs.Volume, error) {
 
 		l := &ecs.Volume{
 			Name: aws.String(data["name"].(string)),
-			Host: &ecs.HostVolumeProperties{
-				SourcePath: aws.String(data["host_path"].(string)),
-			},
+			Host: nil,
+		}
+
+		if v, ok := data["host_path"]; ok {
+			l.Host = &ecs.HostVolumeProperties{
+				SourcePath: aws.String(v.(string)),
+			}
 		}
 
 		volumes = append(volumes, l)

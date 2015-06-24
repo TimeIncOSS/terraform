@@ -58,7 +58,7 @@ func resourceAwsEcsTaskDefinition() *schema.Resource {
 
 						"host_path": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 					},
 				},
@@ -152,7 +152,9 @@ func resourceAwsEcsTaskDefinitionVolumeHash(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["host_path"].(string)))
+	if v, ok := m["host_path"]; ok {
+		buf.WriteString(fmt.Sprintf("%s-", v.(string)))
+	}
 
 	return hashcode.String(buf.String())
 }

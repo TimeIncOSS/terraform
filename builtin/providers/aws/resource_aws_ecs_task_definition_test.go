@@ -26,6 +26,22 @@ func TestAccAWSEcsTaskDefinition_basic(t *testing.T) {
 	})
 }
 
+func TestAccAWSEcsTaskDefinition_withEmpemeralVolume(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckAWSEcsTaskDefinitionDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccAWSEcsTaskDefinition_withScratch,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSEcsTaskDefinitionExists("aws_ecs_task_definition.with_scratch"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckAWSEcsTaskDefinitionDestroy(s *terraform.State) error {
 	conn := testAccProvider.Meta().(*AWSClient).ecsconn
 
@@ -106,6 +122,29 @@ TASK_DEFINITION
   volume {
     name = "jenkins-home"
     host_path = "/ecs/jenkins-home"
+  }
+}
+`
+
+var testAccAWSEcsTaskDefinition_withScratch = `
+resource "aws_ecs_task_definition" "with_scratch" {
+  family = "ghost"
+  container_definitions = <<TASK_DEFINITION
+[
+	{
+		"cpu": 10,
+		"command": ["sleep", "10"],
+		"entryPoint": ["/"],
+		"essential": true,
+		"image": "ghost:latest",
+		"memory": 128,
+		"name": "ghost"
+	}
+]
+TASK_DEFINITION
+
+  volume {
+    name = "database_scratch"
   }
 }
 `
