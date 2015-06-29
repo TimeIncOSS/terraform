@@ -34,6 +34,19 @@ func resourceAwsIamInstanceProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
+					// https://github.com/boto/botocore/blob/2485f5c/botocore/data/iam/2010-05-08/service-2.json#L8196-L8201
+					value := v.(string)
+					if len(value) > 128 {
+						errors = append(errors, fmt.Errorf(
+							"%q cannot be longer than 128 characters", k))
+					}
+					if !regexp.MustCompile("^[\\w+=,.@-]+$").MatchString(value) {
+						errors = append(errors, fmt.Errorf(
+							"%q must match [\\w+=,.@-]", k))
+					}
+					return
+				},
 			},
 			"path": &schema.Schema{
 				Type:     schema.TypeString,
