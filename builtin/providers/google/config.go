@@ -15,6 +15,7 @@ import (
 	"golang.org/x/oauth2/jwt"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/container/v1"
+	"google.golang.org/api/deploymentmanager/v2beta2"
 	"google.golang.org/api/dns/v1"
 	"google.golang.org/api/storage/v1"
 )
@@ -26,10 +27,11 @@ type Config struct {
 	Project     string
 	Region      string
 
-	clientCompute   *compute.Service
-	clientContainer *container.Service
-	clientDns       *dns.Service
-	clientStorage   *storage.Service
+	clientCompute    *compute.Service
+	clientContainer  *container.Service
+	clientDeployment *deploymentmanager.Service
+	clientDns        *dns.Service
+	clientStorage    *storage.Service
 }
 
 func (c *Config) loadAndValidate() error {
@@ -105,6 +107,13 @@ func (c *Config) loadAndValidate() error {
 		"(%s %s) Terraform/%s", runtime.GOOS, runtime.GOARCH, versionString)
 
 	var err error
+
+	log.Printf("[INFO] Instantiating Google Deployment Manager client...")
+	c.clientDeployment, err = deploymentmanager.New(client)
+	if err != nil {
+		return err
+	}
+	c.clientDeployment.UserAgent = userAgent
 
 	log.Printf("[INFO] Instantiating GCE client...")
 	c.clientCompute, err = compute.New(client)
