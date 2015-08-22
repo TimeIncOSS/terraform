@@ -62,6 +62,8 @@ func resourceComputeInstanceGroupManager() *schema.Resource {
 				},
 			},
 
+			"named_port": &schema.Schema{},
+
 			"target_size": &schema.Schema{
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -153,6 +155,19 @@ func resourceComputeInstanceGroupManagerCreate(d *schema.ResourceData, meta inte
 		// Return the error
 		return OperationError(*op.Error)
 	}
+
+	d.Set("instance_group", manager.InstanceGroup)
+
+	np := compute.InstanceGroupsSetNamedPortsRequest{
+		Fingerprint: "",
+		NamedPorts: []*compute.NamedPort{
+			compute.NamedPort{
+				Name: "",
+				Port: int64(),
+			},
+		},
+	}
+	config.clientCompute.InstanceGroups.SetNamedPorts(project, zone, instanceGroup, np)
 
 	return resourceComputeInstanceGroupManagerRead(d, meta)
 }
