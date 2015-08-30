@@ -93,6 +93,8 @@ type Schema struct {
 	ForceNew  bool
 	StateFunc SchemaStateFunc
 
+	CompareFunc SchemaCompareFunc
+
 	// The following fields are only set for a TypeList or TypeSet Type.
 	//
 	// Elem must be either a *Schema or a *Resource only if the Type is
@@ -180,6 +182,8 @@ type SchemaSetFunc func(interface{}) int
 // SchemaStateFunc is a function used to convert some type to a string
 // to be stored in the state.
 type SchemaStateFunc func(interface{}) string
+
+type SchemaCompareFunc func(o, n string) (*terraform.ResourceAttrDiff, error)
 
 // SchemaValidateFunc is a function used to validate a single field in the
 // schema.
@@ -533,6 +537,33 @@ func (m schemaMap) diff(
 	diff *terraform.InstanceDiff,
 	d *ResourceData,
 	all bool) error {
+
+	if schema.CompareFunc != nil {
+		if schema.Type != TypeString {
+			return fmt.Errorf("CompareFunc can only be used on TypeString")
+		}
+
+		o, n, _, _ := d.diffChange(k)
+		if schema.StateFunc != nil {
+			n = schema.StateFunc(n)
+		}
+
+		// Don't call CompareFunc for creations and deletions
+		// since the diff is obvious for both cases
+		if o != nil && n != nil {
+			if o.(string) != "" && n.(string) != "" {
+				rad, err := schema.CompareFunc(o.(string), n.(string))
+				if err != nil {
+					return err
+				}
+				if rad != nil {
+					diff.Attributes[k] = schema.finalizeDiff(rad)
+				}
+				return nil
+			}
+		}
+	}
+
 	var err error
 	switch schema.Type {
 	case TypeBool, TypeInt, TypeFloat, TypeString:
