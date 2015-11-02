@@ -337,6 +337,12 @@ func (n *graphNodeExpandedResource) EvalTree() EvalNode {
 					Name: n.stateId(),
 					Diff: &diff,
 				},
+
+				&EvalDebug{
+					Event:    "PLAN: end",
+					Resource: n.Resource,
+					One:      &diff,
+				},
 			},
 		},
 	})
@@ -439,10 +445,24 @@ func (n *graphNodeExpandedResource) EvalTree() EvalNode {
 					Output:   &diffApply,
 				},
 
+				&EvalDebug{
+					Event:    "APPLY: Before EvalReadDiff",
+					Resource: n.Resource,
+					One:      &diff,
+					Two:      &diffApply,
+				},
+
 				// Get the saved diff
 				&EvalReadDiff{
 					Name: n.stateId(),
 					Diff: &diff,
+				},
+
+				&EvalDebug{
+					Event:    "APPLY: After EvalReadDiff",
+					Resource: n.Resource,
+					One:      &diff,
+					Two:      &diffApply,
 				},
 
 				// Compare the diffs
