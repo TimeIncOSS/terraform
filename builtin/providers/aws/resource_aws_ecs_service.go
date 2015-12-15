@@ -110,7 +110,7 @@ func resourceAwsEcsServiceCreate(d *schema.ResourceData, meta interface{}) error
 	// See https://github.com/hashicorp/terraform/issues/2869
 	var out *ecs.CreateServiceOutput
 	var err error
-	err = resource.Retry(2*time.Minute, func() error {
+	err = resource.Retry(5*time.Minute, func() error {
 		out, err = conn.CreateService(&input)
 
 		if err != nil {
