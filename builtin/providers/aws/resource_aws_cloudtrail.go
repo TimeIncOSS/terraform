@@ -60,8 +60,9 @@ func resourceAwsCloudTrailCreate(d *schema.ResourceData, meta interface{}) error
 	conn := meta.(*AWSClient).cloudtrailconn
 
 	input := cloudtrail.CreateTrailInput{
-		Name:         aws.String(d.Get("name").(string)),
-		S3BucketName: aws.String(d.Get("s3_bucket_name").(string)),
+		Name:                       aws.String(d.Get("name").(string)),
+		S3BucketName:               aws.String(d.Get("s3_bucket_name").(string)),
+		IncludeGlobalServiceEvents: aws.Bool(d.Get("include_global_service_events").(bool)),
 	}
 
 	if v, ok := d.GetOk("cloud_watch_logs_group_arn"); ok {
@@ -70,9 +71,6 @@ func resourceAwsCloudTrailCreate(d *schema.ResourceData, meta interface{}) error
 	if v, ok := d.GetOk("cloud_watch_logs_role_arn"); ok {
 		input.CloudWatchLogsRoleArn = aws.String(v.(string))
 	}
-	if v, ok := d.GetOk("include_global_service_events"); ok {
-		input.IncludeGlobalServiceEvents = aws.Bool(v.(bool))
-	}
 	if v, ok := d.GetOk("s3_key_prefix"); ok {
 		input.S3KeyPrefix = aws.String(v.(string))
 	}
@@ -80,6 +78,7 @@ func resourceAwsCloudTrailCreate(d *schema.ResourceData, meta interface{}) error
 		input.SnsTopicName = aws.String(v.(string))
 	}
 
+	log.Printf("[DEBUG] Creating CloudTrail: %s", input)
 	t, err := conn.CreateTrail(&input)
 	if err != nil {
 		return err
