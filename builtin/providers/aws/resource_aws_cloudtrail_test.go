@@ -24,7 +24,7 @@ func TestAccAWSCloudTrail_basic(t *testing.T) {
 				Config: testAccAWSCloudTrailConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudTrailExists("aws_cloudtrail.foobar", &trail),
-					resource.TestCheckResourceAttr("aws_cloudtrail.foobar", "include_global_service_events", "true"),
+					resource.TestCheckResourceAttr("aws_cloudtrail.foobar", "include_global_service_events", "false"),
 				),
 			},
 			resource.TestStep{
@@ -32,7 +32,7 @@ func TestAccAWSCloudTrail_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCloudTrailExists("aws_cloudtrail.foobar", &trail),
 					resource.TestCheckResourceAttr("aws_cloudtrail.foobar", "s3_key_prefix", "/prefix"),
-					resource.TestCheckResourceAttr("aws_cloudtrail.foobar", "include_global_service_events", "false"),
+					resource.TestCheckResourceAttr("aws_cloudtrail.foobar", "include_global_service_events", "true"),
 				),
 			},
 		},
@@ -152,6 +152,7 @@ var cloudTrailRandInt = rand.New(rand.NewSource(time.Now().UnixNano())).Int()
 var testAccAWSCloudTrailConfig = fmt.Sprintf(`
 resource "aws_cloudtrail" "foobar" {
     name = "tf-trail-foobar"
+    include_global_service_events = false
     s3_bucket_name = "${aws_s3_bucket.foo.id}"
 }
 
@@ -192,7 +193,7 @@ resource "aws_cloudtrail" "foobar" {
     name = "tf-trail-foobar"
     s3_bucket_name = "${aws_s3_bucket.foo.id}"
     s3_key_prefix = "/prefix"
-    include_global_service_events = false
+    include_global_service_events = true
     enable_logging = false
 }
 
