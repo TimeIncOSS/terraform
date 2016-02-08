@@ -9,9 +9,11 @@ import (
 
 func setupTest(fixturepath string) (*cli.MockUi, int) {
 	ui := new(cli.MockUi)
+	p := testProvider()
 	c := &ValidateCommand{
 		Meta: Meta{
-			Ui: ui,
+			ContextOpts: testCtxConfig(p),
+			Ui:          ui,
 		},
 	}
 
