@@ -46,14 +46,16 @@ func (c *ValidateCommand) validate(dir string) int {
 	cfg, err := config.LoadDir(dir)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf(
-			"Error loading files %v\n", err.Error()))
+			"Loading files failed: %v\n", err.Error()))
 		return 1
 	}
+
 	err = cfg.Validate()
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf(
-			"Error validating: %v\n", err.Error()))
+			"Validation failed: %v\n", err.Error()))
 		return 1
 	}
+
 	return 0
 }
