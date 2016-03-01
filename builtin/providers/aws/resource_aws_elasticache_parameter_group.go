@@ -100,6 +100,7 @@ func resourceAwsElasticacheParameterGroupRead(d *schema.ResourceData, meta inter
 
 	if len(describeResp.CacheParameterGroups) != 1 ||
 		*describeResp.CacheParameterGroups[0].CacheParameterGroupName != d.Id() {
+		// TODO
 		return fmt.Errorf("Unable to find Parameter Group: %#v", describeResp.CacheParameterGroups)
 	}
 

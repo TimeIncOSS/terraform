@@ -60,6 +60,7 @@ func resourceAwsVpcDhcpOptionsAssociationRead(d *schema.ResourceData, meta inter
 	vpcRaw, _, err := VPCStateRefreshFunc(conn, d.Get("vpc_id").(string))()
 
 	if err != nil {
+		// TODO
 		return err
 	}
 

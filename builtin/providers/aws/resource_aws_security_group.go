@@ -267,6 +267,7 @@ func resourceAwsSecurityGroupRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	if sgRaw == nil {
+		log.Printf("[WARN] Removing Security Group %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

@@ -121,10 +121,12 @@ func resourceAwsAmiRead(d *schema.ResourceData, meta interface{}) error {
 
 	res, err := client.DescribeImages(req)
 	if err != nil {
+		// TODO Check InvalidAMIID.NotFound && InvalidAMIID.Unavailable
 		return err
 	}
 
 	if len(res.Images) != 1 {
+		log.Printf("[WARN] Removing AMI %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}
@@ -285,6 +287,7 @@ func resourceAwsAmiWaitForAvailable(id string, client *ec2.EC2) (*ec2.Image, err
 			// right after the API responds, so we need to tolerate a couple Not Found errors
 			// before an available AMI shows up.
 			if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidAMIID.NotFound" {
+				// TODO: Check InvalidAMIID.Unavailable too
 				pollsWhereNotFound++
 				// We arbitrarily stop polling after getting a "not found" error five times,
 				// assuming that the AMI has been deleted by something other than Terraform.

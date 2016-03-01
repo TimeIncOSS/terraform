@@ -119,7 +119,7 @@ func resourceAwsNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidNetworkInterfaceID.NotFound" {
-			// The ENI is gone now, so just remove it from the state
+			log.Printf("[WARN] Removing ENI %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

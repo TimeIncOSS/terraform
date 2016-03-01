@@ -573,6 +573,7 @@ func resourceAwsDbInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if v == nil {
+		// TODO: Check if nil-checking is enough
 		d.SetId("")
 		return nil
 	}

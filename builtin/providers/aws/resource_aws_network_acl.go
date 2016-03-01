@@ -169,6 +169,7 @@ func resourceAwsNetworkAclRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	if err != nil {
+		// TODO
 		return err
 	}
 	if resp == nil {

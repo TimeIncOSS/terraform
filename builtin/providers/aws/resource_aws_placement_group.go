@@ -89,6 +89,7 @@ func resourceAwsPlacementGroupRead(d *schema.ResourceData, meta interface{}) err
 	}
 	out, err := conn.DescribePlacementGroups(&input)
 	if err != nil {
+		// TODO
 		return err
 	}
 	pg := out.PlacementGroups[0]

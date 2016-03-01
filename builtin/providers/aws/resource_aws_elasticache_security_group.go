@@ -93,6 +93,7 @@ func resourceAwsElasticacheSecurityGroupRead(d *schema.ResourceData, meta interf
 		return err
 	}
 	if len(res.CacheSecurityGroups) == 0 {
+		// TODO
 		return fmt.Errorf("Error missing %v", d.Get("name"))
 	}
 

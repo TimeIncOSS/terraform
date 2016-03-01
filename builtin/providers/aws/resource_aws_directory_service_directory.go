@@ -400,6 +400,7 @@ func resourceAwsDirectoryServiceDirectoryRead(d *schema.ResourceData, meta inter
 	}
 	out, err := dsconn.DescribeDirectories(&input)
 	if err != nil {
+		// TODO
 		return err
 	}
 

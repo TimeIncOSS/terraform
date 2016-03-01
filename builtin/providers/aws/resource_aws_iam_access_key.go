@@ -84,7 +84,7 @@ func resourceAwsIamAccessKeyRead(d *schema.ResourceData, meta interface{}) error
 	getResp, err := iamconn.ListAccessKeys(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" { // XXX TEST ME
-			// the user does not exist, so the key can't exist.
+			log.Printf("[WARN] Removing IAM Access Key %q because the IAM User is gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

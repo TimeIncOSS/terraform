@@ -139,6 +139,7 @@ func resourceAwsVolumeAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	_, err := conn.DescribeVolumes(request)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidVolume.NotFound" {
+			log.Printf("[WARN] Removing EC2 Volume Attachement %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

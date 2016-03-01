@@ -132,6 +132,7 @@ func resourceAwsRoute53ZoneRead(d *schema.ResourceData, meta interface{}) error 
 	if err != nil {
 		// Handle a deleted zone
 		if r53err, ok := err.(awserr.Error); ok && r53err.Code() == "NoSuchHostedZone" {
+			log.Printf("[WARN] Removing Route53 Hosted Zone %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

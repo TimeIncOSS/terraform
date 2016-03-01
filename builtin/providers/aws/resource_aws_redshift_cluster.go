@@ -289,8 +289,8 @@ func resourceAwsRedshiftClusterRead(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			if "ClusterNotFound" == awsErr.Code() {
+				log.Printf("[WARN] Removing Redshift Cluster %q because it's gone.", d.Id())
 				d.SetId("")
-				log.Printf("[DEBUG] Redshift Cluster (%s) not found", d.Id())
 				return nil
 			}
 		}

@@ -116,6 +116,7 @@ func resourceAwsEcsTaskDefinitionRead(d *schema.ResourceData, meta interface{}) 
 		TaskDefinition: aws.String(d.Get("arn").(string)),
 	})
 	if err != nil {
+		// TODO
 		return err
 	}
 	log.Printf("[DEBUG] Received task definition %s", out)

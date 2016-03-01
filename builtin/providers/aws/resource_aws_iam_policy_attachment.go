@@ -95,7 +95,7 @@ func resourceAwsIamPolicyAttachmentRead(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			if awsErr.Code() == "NoSuchEntity" {
-				log.Printf("[WARN] No such entity found for Policy Attachment (%s)", d.Id())
+				log.Printf("[WARN] Removing IAM Policy Attachement %q because the IAM Policy is gone.", d.Id())
 				d.SetId("")
 				return nil
 			}

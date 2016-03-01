@@ -147,7 +147,9 @@ func resourceAwsCloudTrailRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if len(resp.TrailList) == 0 {
-		return fmt.Errorf("No CloudTrail found, using name %q", name)
+		log.Printf("[WARN] Removing CloudTrail Trail %q because it's gone.", d.Id())
+		d.SetId("")
+		return nil
 	}
 
 	trail := resp.TrailList[0]

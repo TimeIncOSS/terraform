@@ -190,7 +190,7 @@ func resourceAwsCloudFormationStackRead(d *schema.ResourceData, meta interface{}
 
 	stacks := resp.Stacks
 	if len(stacks) < 1 {
-		log.Printf("[DEBUG] Removing CloudFormation stack %s as it's already gone", d.Id())
+		log.Printf("[WARN] Removing CloudFormation stack %s as it's already gone", d.Id())
 		d.SetId("")
 		return nil
 	}

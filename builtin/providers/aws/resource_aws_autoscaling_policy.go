@@ -75,6 +75,7 @@ func resourceAwsAutoscalingPolicyRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 	if p == nil {
+		log.Printf("[WARN] Removing Autoscaling Policy %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

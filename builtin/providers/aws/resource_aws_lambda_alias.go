@@ -78,6 +78,7 @@ func resourceAwsLambdaAliasRead(d *schema.ResourceData, meta interface{}) error 
 
 	aliasConfiguration, err := conn.GetAlias(params)
 	if err != nil {
+		// TODO
 		return err
 	}
 

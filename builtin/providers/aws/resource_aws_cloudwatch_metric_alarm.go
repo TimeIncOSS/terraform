@@ -112,6 +112,7 @@ func resourceAwsCloudWatchMetricAlarmRead(d *schema.ResourceData, meta interface
 		return err
 	}
 	if a == nil {
+		// TODO - check if nil checking is ok
 		d.SetId("")
 		return nil
 	}

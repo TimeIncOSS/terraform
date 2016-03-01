@@ -184,6 +184,7 @@ func resourceAwsDbSecurityGroupRead(d *schema.ResourceData, meta interface{}) er
 		})
 
 		if err != nil {
+			// TODO
 			log.Printf("[DEBUG] Error retrieving tags for ARN: %s", arn)
 		}
 

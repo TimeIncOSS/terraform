@@ -103,6 +103,7 @@ func resourceAwsEfsFileSystemRead(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 	if len(resp.FileSystems) < 1 {
+		// TODO
 		return fmt.Errorf("EFS file system %q not found", d.Id())
 	}
 

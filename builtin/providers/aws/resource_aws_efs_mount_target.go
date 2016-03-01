@@ -106,6 +106,7 @@ func resourceAwsEfsMountTargetCreate(d *schema.ResourceData, meta interface{}) e
 
 	_, err = stateConf.WaitForState()
 	if err != nil {
+		// TODO
 		return fmt.Errorf("Error waiting for EFS mount target (%s) to create: %s", d.Id(), err)
 	}
 

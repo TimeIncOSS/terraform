@@ -173,6 +173,7 @@ func resourceAwsIamInstanceProfileRead(d *schema.ResourceData, meta interface{})
 	result, err := iamconn.GetInstanceProfile(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" {
+			log.Printf("[WARN] Removing IAM Instance Profile %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

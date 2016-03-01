@@ -104,7 +104,7 @@ func resourceAwsLBCookieStickinessPolicyRead(d *schema.ResourceData, meta interf
 	getResp, err := elbconn.DescribeLoadBalancerPolicies(request)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "PolicyNotFound" {
-			// The policy is gone.
+			log.Printf("[WARN] Removing LB Cookie Stickiness Policy %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

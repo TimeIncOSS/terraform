@@ -126,6 +126,7 @@ func resourceAwsRouteTableRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if rtRaw == nil {
+		// TODO: Check if nil-check is enough
 		d.SetId("")
 		return nil
 	}

@@ -64,6 +64,7 @@ func resourceAwsIamSamlProviderRead(d *schema.ResourceData, meta interface{}) er
 	}
 	out, err := iamconn.GetSAMLProvider(input)
 	if err != nil {
+		// TODO
 		return err
 	}
 

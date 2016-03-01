@@ -71,6 +71,7 @@ func resourceAwsIamUserPolicyRead(d *schema.ResourceData, meta interface{}) erro
 	getResp, err := iamconn.GetUserPolicy(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" { // XXX test me
+			log.Printf("[WARN] Removing IAM User Policy %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

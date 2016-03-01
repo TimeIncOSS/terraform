@@ -142,6 +142,7 @@ func resourceAwsNetworkAclRuleCreate(d *schema.ResourceData, meta interface{}) e
 func resourceAwsNetworkAclRuleRead(d *schema.ResourceData, meta interface{}) error {
 	resp, err := findNetworkAclRule(d, meta)
 	if err != nil {
+		// TODO
 		return err
 	}
 

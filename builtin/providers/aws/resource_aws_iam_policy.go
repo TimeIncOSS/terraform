@@ -75,6 +75,7 @@ func resourceAwsIamPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	response, err := iamconn.GetPolicy(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" {
+			log.Printf("[WARN] Removing IAM Policy %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

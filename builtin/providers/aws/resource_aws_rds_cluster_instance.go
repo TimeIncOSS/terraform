@@ -142,6 +142,8 @@ func resourceAwsRDSClusterInstanceRead(d *schema.ResourceData, meta interface{})
 		}
 	}
 
+	// TODO
+
 	if dbc == nil {
 		return fmt.Errorf("[WARN] Error finding RDS Cluster (%s) for Cluster Instance (%s): %s",
 			*db.DBClusterIdentifier, *db.DBInstanceIdentifier, err)

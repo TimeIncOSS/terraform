@@ -225,9 +225,9 @@ func resourceAwsRoute53HealthCheckRead(d *schema.ResourceData, meta interface{})
 	read, err := conn.GetHealthCheck(&route53.GetHealthCheckInput{HealthCheckId: aws.String(d.Id())})
 	if err != nil {
 		if r53err, ok := err.(awserr.Error); ok && r53err.Code() == "NoSuchHealthCheck" {
+			log.Printf("[WARN] Removing Route53 Health Check %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
-
 		}
 		return err
 	}

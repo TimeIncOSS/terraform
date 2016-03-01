@@ -85,6 +85,7 @@ func resourceAwsIamRolePolicyRead(d *schema.ResourceData, meta interface{}) erro
 	getResp, err := iamconn.GetRolePolicy(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" { // XXX test me
+			log.Printf("[WARN] Removing IAM Role Policy %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

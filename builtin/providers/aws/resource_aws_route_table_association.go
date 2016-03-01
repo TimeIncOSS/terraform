@@ -63,6 +63,7 @@ func resourceAwsRouteTableAssociationRead(d *schema.ResourceData, meta interface
 	rtRaw, _, err := resourceAwsRouteTableStateRefreshFunc(
 		conn, d.Get("route_table_id").(string))()
 	if err != nil {
+		// TODO
 		return err
 	}
 	if rtRaw == nil {

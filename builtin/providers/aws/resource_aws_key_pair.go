@@ -81,6 +81,7 @@ func resourceAwsKeyPairRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		awsErr, ok := err.(awserr.Error)
 		if ok && awsErr.Code() == "InvalidKeyPair.NotFound" {
+			log.Printf("[WARN] Removing EC2 Key Pair %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

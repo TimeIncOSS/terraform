@@ -100,7 +100,7 @@ func resourceAwsSubnetRead(d *schema.ResourceData, meta interface{}) error {
 
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidSubnetID.NotFound" {
-			// Update state to indicate the subnet no longer exists.
+			log.Printf("[WARN] Removing Subnet %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

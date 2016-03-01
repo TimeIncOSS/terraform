@@ -79,7 +79,7 @@ func resourceAwsRedshiftSubnetGroupRead(d *schema.ResourceData, meta interface{}
 	describeResp, err := conn.DescribeClusterSubnetGroups(&describeOpts)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "ClusterSubnetGroupNotFoundFault" {
-			log.Printf("[INFO] Redshift Subnet Group: %s was not found", d.Id())
+			log.Printf("[WARN] Removing Redshift Subnet Group %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

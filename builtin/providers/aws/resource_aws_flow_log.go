@@ -118,6 +118,7 @@ func resourceAwsLogFlowRead(d *schema.ResourceData, meta interface{}) error {
 	resp, err := conn.DescribeFlowLogs(opts)
 	if err != nil {
 		log.Printf("[WARN] Error describing Flow Logs for id (%s)", d.Id())
+		// TODO
 		d.SetId("")
 		return nil
 	}

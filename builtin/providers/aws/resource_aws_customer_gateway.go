@@ -132,6 +132,7 @@ func resourceAwsCustomerGatewayRead(d *schema.ResourceData, meta interface{}) er
 	})
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidCustomerGatewayID.NotFound" {
+			log.Printf("[WARN] Removing Customer Gateway %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		} else {

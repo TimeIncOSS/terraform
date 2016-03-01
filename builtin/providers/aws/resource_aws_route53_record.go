@@ -250,7 +250,7 @@ func resourceAwsRoute53RecordRead(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		switch err {
 		case r53NoHostedZoneFound, r53NoRecordsFound:
-			log.Printf("[DEBUG] %s for: %s, removing from state file", err, d.Id())
+			log.Printf("[WARN] Removing Route53 record %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		default:

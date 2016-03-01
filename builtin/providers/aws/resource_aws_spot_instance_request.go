@@ -163,6 +163,7 @@ func resourceAwsSpotInstanceRequestRead(d *schema.ResourceData, meta interface{}
 		// If the spot request was not found, return nil so that we can show
 		// that it is gone.
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidSpotInstanceRequestID.NotFound" {
+			log.Printf("[WARN] Removing EC2 Spot Instance Request %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

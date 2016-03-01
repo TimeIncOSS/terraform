@@ -136,6 +136,7 @@ func resourceAwsLambdaEventSourceMappingRead(d *schema.ResourceData, meta interf
 
 	eventSourceMappingConfiguration, err := conn.GetEventSourceMapping(params)
 	if err != nil {
+		// TODO
 		return err
 	}
 

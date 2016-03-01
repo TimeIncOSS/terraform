@@ -99,7 +99,7 @@ func resourceAwsNatGatewayRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if ngRaw == nil || strings.ToLower(state) == "deleted" {
-		log.Printf("[INFO] Removing %s from Terraform state as it is not found or in the deleted state.", d.Id())
+		log.Printf("[WARN] Removing NAT Gateway %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

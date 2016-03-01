@@ -131,6 +131,7 @@ func resourceAwsVpcRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if vpcRaw == nil {
+		// TODO: Check if nil-check is enough
 		d.SetId("")
 		return nil
 	}

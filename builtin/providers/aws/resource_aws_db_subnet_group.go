@@ -91,7 +91,7 @@ func resourceAwsDbSubnetGroupRead(d *schema.ResourceData, meta interface{}) erro
 	describeResp, err := rdsconn.DescribeDBSubnetGroups(&describeOpts)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "DBSubnetGroupNotFoundFault" {
-			// Update state to indicate the db subnet no longer exists.
+			log.Printf("[WARN] Removing DB Subnet Group %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

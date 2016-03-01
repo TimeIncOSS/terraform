@@ -93,6 +93,7 @@ func resourceAwsAutoscalingLifecycleHookRead(d *schema.ResourceData, meta interf
 		return err
 	}
 	if p == nil {
+		log.Printf("[WARN] Removing Autoscaling Lifecycle Hook %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

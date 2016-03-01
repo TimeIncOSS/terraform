@@ -128,6 +128,7 @@ func resourceAwsCodeCommitRepositoryRead(d *schema.ResourceData, meta interface{
 
 	out, err := conn.GetRepository(input)
 	if err != nil {
+		// TODO
 		return fmt.Errorf("Error reading CodeCommit Repository: %s", err.Error())
 	}
 

@@ -144,6 +144,7 @@ func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) err
 
 	resp, err := conn.DescribeDhcpOptions(req)
 	if err != nil {
+		// TODO
 		return fmt.Errorf("Error retrieving DHCP Options: %s", err)
 	}
 

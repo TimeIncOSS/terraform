@@ -302,7 +302,7 @@ func resourceAwsElbRead(d *schema.ResourceData, meta interface{}) error {
 	describeResp, err := elbconn.DescribeLoadBalancers(describeElbOpts)
 	if err != nil {
 		if isLoadBalancerNotFound(err) {
-			// The ELB is gone now, so just remove it from the state
+			log.Printf("[WARN] Removing ELB %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}
@@ -319,7 +319,7 @@ func resourceAwsElbRead(d *schema.ResourceData, meta interface{}) error {
 	describeAttrsResp, err := elbconn.DescribeLoadBalancerAttributes(describeAttrsOpts)
 	if err != nil {
 		if isLoadBalancerNotFound(err) {
-			// The ELB is gone now, so just remove it from the state
+			log.Printf("[WARN] Removing ELB %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

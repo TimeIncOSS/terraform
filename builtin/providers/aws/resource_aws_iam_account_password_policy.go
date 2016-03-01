@@ -125,7 +125,7 @@ func resourceAwsIamAccountPasswordPolicyRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		awsErr, ok := err.(awserr.Error)
 		if ok && awsErr.Code() == "NoSuchEntity" {
-			log.Printf("[WARN] IAM account password policy is gone (i.e. default)")
+			log.Println("[WARN] Removing IAM Account Password Policy because it's gone.")
 			d.SetId("")
 			return nil
 		}

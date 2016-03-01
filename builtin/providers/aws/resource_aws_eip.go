@@ -125,6 +125,7 @@ func resourceAwsEipRead(d *schema.ResourceData, meta interface{}) error {
 	describeAddresses, err := ec2conn.DescribeAddresses(req)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidAllocationID.NotFound" {
+			log.Printf("[WARN] Removing EIP %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

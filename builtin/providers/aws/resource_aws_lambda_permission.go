@@ -117,6 +117,7 @@ func resourceAwsLambdaPermissionCreate(d *schema.ResourceData, meta interface{})
 	})
 
 	if err != nil {
+		// TODO
 		return err
 	}
 

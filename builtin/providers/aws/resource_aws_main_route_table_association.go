@@ -77,8 +77,9 @@ func resourceAwsMainRouteTableAssociationRead(d *schema.ResourceData, meta inter
 	}
 
 	if mainAssociation == nil || *mainAssociation.RouteTableAssociationId != d.Id() {
-		// It seems it doesn't exist anymore, so clear the ID
+		log.Printf("[WARN] Removing Main Route Table Association %q because it's gone.", d.Id())
 		d.SetId("")
+		return nil
 	}
 
 	return nil

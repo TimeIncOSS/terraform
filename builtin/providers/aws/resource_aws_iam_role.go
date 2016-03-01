@@ -86,6 +86,7 @@ func resourceAwsIamRoleRead(d *schema.ResourceData, meta interface{}) error {
 	getResp, err := iamconn.GetRole(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" { // XXX test me
+			log.Printf("[WARN] Removing IAM Role %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

@@ -64,7 +64,7 @@ func resourceAwsEcsClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if *c.ClusterName == clusterName {
 			// Status==INACTIVE means deleted cluster
 			if *c.Status == "INACTIVE" {
-				log.Printf("[DEBUG] Removing ECS cluster %q because it's INACTIVE", *c.ClusterArn)
+				log.Printf("[WARN] Removing ECS cluster %q because it's INACTIVE", *c.ClusterArn)
 				d.SetId("")
 				return nil
 			}
@@ -75,7 +75,7 @@ func resourceAwsEcsClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	log.Printf("[ERR] No matching ECS Cluster found for (%s)", d.Id())
+	log.Printf("[WARN] Removing ECS Cluster %q because it's gone.", d.Id())
 	d.SetId("")
 	return nil
 }

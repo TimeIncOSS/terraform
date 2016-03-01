@@ -82,6 +82,7 @@ func resourceAwsVpnConnectionRouteRead(d *schema.ResourceData, meta interface{})
 	})
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidVpnConnectionID.NotFound" {
+			log.Printf("[WARN] Removing VPN Connection Route %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		} else {

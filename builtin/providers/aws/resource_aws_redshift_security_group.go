@@ -184,6 +184,7 @@ func resourceAwsRedshiftSecurityGroupRetrieve(d *schema.ResourceData, meta inter
 	resp, err := conn.DescribeClusterSecurityGroups(&opts)
 
 	if err != nil {
+		// TODO
 		return nil, fmt.Errorf("Error retrieving Redshift Security Groups: %s", err)
 	}
 

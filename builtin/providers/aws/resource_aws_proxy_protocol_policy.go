@@ -79,7 +79,7 @@ func resourceAwsProxyProtocolPolicyRead(d *schema.ResourceData, meta interface{}
 	resp, err := elbconn.DescribeLoadBalancers(req)
 	if err != nil {
 		if isLoadBalancerNotFound(err) {
-			// The ELB is gone now, so just remove it from the state
+			log.Printf("[WARN] Removing ELB Proxy Protocol Policy %q because the ELB is gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

@@ -67,6 +67,7 @@ func resourceAwsIamGroupRead(d *schema.ResourceData, meta interface{}) error {
 	getResp, err := iamconn.GetGroup(request)
 	if err != nil {
 		if iamerr, ok := err.(awserr.Error); ok && iamerr.Code() == "NoSuchEntity" {
+			log.Printf("[WARN] Removing IAM Group %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

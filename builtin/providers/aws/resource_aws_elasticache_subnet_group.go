@@ -89,6 +89,7 @@ func resourceAwsElasticacheSubnetGroupRead(d *schema.ResourceData, meta interfac
 		return err
 	}
 	if len(res.CacheSubnetGroups) == 0 {
+		// TODO
 		return fmt.Errorf("Error missing %v", d.Get("name"))
 	}
 

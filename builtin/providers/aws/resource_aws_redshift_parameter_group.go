@@ -100,8 +100,8 @@ func resourceAwsRedshiftParameterGroupRead(d *schema.ResourceData, meta interfac
 
 	if len(describeResp.ParameterGroups) != 1 ||
 		*describeResp.ParameterGroups[0].ParameterGroupName != d.Id() {
+		log.Printf("[WARN] Removing Redshift Parameter Group %q because it's gone.", d.Id())
 		d.SetId("")
-		return fmt.Errorf("Unable to find Parameter Group: %#v", describeResp.ParameterGroups)
 	}
 
 	d.Set("name", describeResp.ParameterGroups[0].ParameterGroupName)

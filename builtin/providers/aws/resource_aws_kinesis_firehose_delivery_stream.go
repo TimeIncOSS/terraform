@@ -223,6 +223,7 @@ func resourceAwsKinesisFirehoseDeliveryStreamRead(d *schema.ResourceData, meta i
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			if awsErr.Code() == "ResourceNotFoundException" {
+				log.Printf("[WARN] Removing Kinesis Firehose Delivery Stream %q because it's gone.", d.Id())
 				d.SetId("")
 				return nil
 			}

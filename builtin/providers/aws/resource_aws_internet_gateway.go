@@ -63,6 +63,7 @@ func resourceAwsInternetGatewayRead(d *schema.ResourceData, meta interface{}) er
 	}
 	if igRaw == nil {
 		// Seems we have lost our internet gateway
+		// TODO: Check if nil-check is enough
 		d.SetId("")
 		return nil
 	}

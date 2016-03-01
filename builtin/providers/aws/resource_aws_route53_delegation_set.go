@@ -69,6 +69,7 @@ func resourceAwsRoute53DelegationSetRead(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] Reading Route53 reusable delegation set: %#v", input)
 	out, err := r53.GetReusableDelegationSet(input)
 	if err != nil {
+		// TODO
 		return err
 	}
 	log.Printf("[DEBUG] Route53 reusable delegation set received: %#v", out)

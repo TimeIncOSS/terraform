@@ -155,6 +155,7 @@ func resourceAwsSnsTopicSubscriptionRead(d *schema.ResourceData, meta interface{
 		SubscriptionArn: aws.String(d.Id()),
 	})
 	if err != nil {
+		// TODO
 		return err
 	}
 

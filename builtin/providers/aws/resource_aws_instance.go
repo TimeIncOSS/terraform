@@ -442,6 +442,7 @@ func resourceAwsInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		// If the instance was not found, return nil so that we can show
 		// that the instance is gone.
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidInstanceID.NotFound" {
+			log.Printf("[WARN] Removing EC2 instance %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

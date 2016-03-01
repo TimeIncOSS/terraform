@@ -105,6 +105,7 @@ func resourceAwsVPCPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	// connection is gone. Destruction isn't allowed, and it eventually
 	// just "falls off" the console. See GH-2322
 	if *pc.Status.Code == "failed" {
+		log.Printf("[WARN] Removing VPC Peering Connection %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

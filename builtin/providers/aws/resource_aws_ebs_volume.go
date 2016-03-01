@@ -183,6 +183,7 @@ func resourceAwsEbsVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	response, err := conn.DescribeVolumes(request)
 	if err != nil {
 		if ec2err, ok := err.(awserr.Error); ok && ec2err.Code() == "InvalidVolume.NotFound" {
+			log.Printf("[WARN] Removing EBS Volume %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

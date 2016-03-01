@@ -127,6 +127,7 @@ func resourceAwsGlacierVaultRead(d *schema.ResourceData, meta interface{}) error
 
 	out, err := glacierconn.DescribeVault(input)
 	if err != nil {
+		// TODO
 		return fmt.Errorf("Error reading Glacier Vault: %s", err.Error())
 	}
 

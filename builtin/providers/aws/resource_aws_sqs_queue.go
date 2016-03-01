@@ -161,6 +161,7 @@ func resourceAwsSqsQueueRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	if err != nil {
+		// TODO
 		return err
 	}
 

@@ -61,6 +61,7 @@ func resourceAwsCloudWatchLogGroupRead(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] Reading CloudWatch Log Group: %q", d.Get("name").(string))
 	lg, err := lookupCloudWatchLogGroup(conn, d.Get("name").(string), nil)
 	if err != nil {
+		// TODO
 		return err
 	}
 

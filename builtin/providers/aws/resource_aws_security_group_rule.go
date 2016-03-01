@@ -161,7 +161,7 @@ func resourceAwsSecurityGroupRuleRead(d *schema.ResourceData, meta interface{}) 
 	sg_id := d.Get("security_group_id").(string)
 	sg, err := findResourceSecurityGroup(conn, sg_id)
 	if err != nil {
-		log.Printf("[DEBUG] Error finding Secuirty Group (%s) for Rule (%s): %s", sg_id, d.Id(), err)
+		log.Printf("[WARN] Removing Security Group Rule %q because the security group is gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

@@ -122,6 +122,7 @@ func resourceAwsKinesisStreamRead(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			if awsErr.Code() == "ResourceNotFoundException" {
+				log.Printf("[WARN] Removing Kinesis Stream %q because it's gone.", d.Id())
 				d.SetId("")
 				return nil
 			}

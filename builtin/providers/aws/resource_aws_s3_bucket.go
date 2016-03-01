@@ -297,7 +297,7 @@ func resourceAwsS3BucketRead(d *schema.ResourceData, meta interface{}) error {
 	})
 	if err != nil {
 		if awsError, ok := err.(awserr.RequestFailure); ok && awsError.StatusCode() == 404 {
-			log.Printf("[WARN] S3 Bucket (%s) not found, error code (404)", d.Id())
+			log.Printf("[WARN] Removing S3 Bucket %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		} else {

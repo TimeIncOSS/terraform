@@ -257,7 +257,7 @@ func resourceAwsAutoscalingGroupRead(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 	if g == nil {
-		log.Printf("[INFO] Autoscaling Group %q not found", d.Id())
+		log.Printf("[WARN] Removing Autoscaling Group %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

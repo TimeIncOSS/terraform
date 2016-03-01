@@ -237,8 +237,8 @@ func resourceAwsRDSClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
 			if "DBClusterNotFoundFault" == awsErr.Code() {
+				log.Printf("[WARN] Removing RDS Cluster %q because it's gone.", d.Id())
 				d.SetId("")
-				log.Printf("[DEBUG] RDS Cluster (%s) not found", d.Id())
 				return nil
 			}
 		}
@@ -254,7 +254,7 @@ func resourceAwsRDSClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if dbc == nil {
-		log.Printf("[WARN] RDS Cluster (%s) not found", d.Id())
+		log.Printf("[WARN] Removing RDS Cluster %q because it's gone.", d.Id())
 		d.SetId("")
 		return nil
 	}

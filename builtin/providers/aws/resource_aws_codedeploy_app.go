@@ -70,6 +70,7 @@ func resourceAwsCodeDeployAppRead(d *schema.ResourceData, meta interface{}) erro
 	})
 	if err != nil {
 		if codedeployerr, ok := err.(awserr.Error); ok && codedeployerr.Code() == "ApplicationDoesNotExistException" {
+			log.Printf("[WARN] Removing CodeDeploy App %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		} else {

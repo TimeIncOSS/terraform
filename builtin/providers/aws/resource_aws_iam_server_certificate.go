@@ -138,6 +138,7 @@ func resourceAwsIAMServerCertificateRead(d *schema.ResourceData, meta interface{
 
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok {
+			// TODO
 			return fmt.Errorf("[WARN] Error reading IAM Server Certificate: %s: %s", awsErr.Code(), awsErr.Message())
 		}
 		return fmt.Errorf("[WARN] Error reading IAM Server Certificate: %s", err)

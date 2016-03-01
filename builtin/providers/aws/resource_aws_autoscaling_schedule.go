@@ -164,6 +164,7 @@ func resourceAwsASGScheduledActionRetrieve(d *schema.ResourceData, meta interfac
 	log.Printf("[INFO] Describing Autoscaling Scheduled Action: %+v", params)
 	actions, err := autoscalingconn.DescribeScheduledActions(params)
 	if err != nil {
+		// TODO
 		return nil, fmt.Errorf("Error retrieving Autoscaling Scheduled Actions: %s", err)
 	}
 

@@ -588,7 +588,7 @@ func resourceAwsDynamoDbTableRead(d *schema.ResourceData, meta interface{}) erro
 
 	if err != nil {
 		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == "ResourceNotFoundException" {
-			log.Printf("[WARN] Dynamodb Table (%s) not found, error code (404)", d.Id())
+			log.Printf("[WARN] Removing DynamoDB Table %q because it's gone.", d.Id())
 			d.SetId("")
 			return nil
 		}

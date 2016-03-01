@@ -256,7 +256,7 @@ func resourceAwsOpsworksStackRead(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		if awserr, ok := err.(awserr.Error); ok {
 			if awserr.Code() == "ResourceNotFoundException" {
-				log.Printf("[DEBUG] OpsWorks stack (%s) not found", d.Id())
+				log.Printf("[WARN] Removing OpsWorks Stack %q because it's gone.", d.Id())
 				d.SetId("")
 				return nil
 			}
