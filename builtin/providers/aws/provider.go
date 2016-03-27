@@ -192,6 +192,7 @@ func Provider() terraform.ResourceProvider {
 			"aws_api_gateway_model":                        resourceAwsApiGatewayModel(),
 			"aws_api_gateway_resource":                     resourceAwsApiGatewayResource(),
 			"aws_api_gateway_rest_api":                     resourceAwsApiGatewayRestApi(),
+			"aws_api_gateway_stage":                        resourceAwsApiGatewayStage(),
 			"aws_app_cookie_stickiness_policy":             resourceAwsAppCookieStickinessPolicy(),
 			"aws_appautoscaling_target":                    resourceAwsAppautoscalingTarget(),
 			"aws_appautoscaling_policy":                    resourceAwsAppautoscalingPolicy(),
