@@ -12,6 +12,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"null_resource": resource(),
+			"null_repro":    repro(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
