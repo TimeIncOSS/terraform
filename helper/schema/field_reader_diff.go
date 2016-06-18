@@ -2,6 +2,8 @@ package schema
 
 import (
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform/terraform"
@@ -42,7 +44,7 @@ func (r *DiffFieldReader) ReadField(address []string) (FieldReadResult, error) {
 	case TypeBool, TypeInt, TypeFloat, TypeString:
 		return r.readPrimitive(address, schema)
 	case TypeList:
-		return readListField(r, address, schema)
+		return r.readList(address, schema)
 	case TypeMap:
 		return r.readMap(address, schema)
 	case TypeSet:
@@ -134,6 +136,105 @@ func (r *DiffFieldReader) readPrimitive(
 	}
 
 	return result, nil
+}
+
+func (r *DiffFieldReader) readList(
+	address []string, schema *Schema) (FieldReadResult, error) {
+
+	prefix := strings.Join(address, ".") + "."
+
+	var count int
+
+	// If we have an empty list, then return an empty list
+	diffCount, ok := r.Diff.Attributes[strings.Join(append(address, "#"), ".")]
+	if ok {
+		i, err := strconv.Atoi(diffCount.New)
+		if err != nil {
+			count = 0
+		}
+		count = i
+	} else {
+		originalCount, err := r.Source.ReadField(append(address, "#"))
+		if err != nil {
+			return FieldReadResult{
+				Value:    []interface{}{},
+				Exists:   false,
+				Computed: false,
+			}, err
+		}
+		count, ok = originalCount.Value.(int)
+		if !ok {
+			count = 0
+		}
+	}
+
+	diffContainsField := false
+	for k, _ := range r.Diff.Attributes {
+		if strings.HasPrefix(k, address[0]+".") {
+			diffContainsField = true
+		}
+	}
+	if !diffContainsField {
+		return FieldReadResult{
+			Value:  []interface{}{},
+			Exists: false,
+		}, nil
+	}
+
+	// Create the list that will be our result
+	list := []interface{}{}
+
+	// Go through the map and find all the list items
+	for i := 0; i < count; i++ {
+		k := strings.Join(append(address, strconv.Itoa(i)), ".")
+
+		d, ok := r.Diff.Attributes[k]
+		if ok {
+			if d.NewRemoved {
+				// If the field is removed, we always ignore it
+				continue
+			}
+		}
+		if !strings.HasPrefix(k, prefix) {
+			continue
+		}
+		if strings.HasSuffix(k, "#") {
+			// Ignore any count field
+			continue
+		}
+
+		// Split the key, since it might be a sub-object like "idx.field"
+		parts := strings.Split(k[len(prefix):], ".")
+		idx := parts[0]
+
+		raw, err := r.ReadField(append(address, idx))
+		if err != nil {
+			return FieldReadResult{}, err
+		}
+		if !raw.Exists {
+			// This shouldn't happen because we just verified it does exist
+			panic("missing field in set: " + k + "." + idx)
+		}
+		list = append(list, raw.Value)
+	}
+
+	// Determine if the list "exists". It exists if there are items or if
+	// the diff explicitly wanted it empty.
+	exists := len(list) > 0
+	if !exists {
+		// We could check if the diff value is "0" here but I think the
+		// existence of "#" on its own is enough to show it existed. This
+		// protects us in the future from the zero value changing from
+		// "0" to "" breaking us (if that were to happen).
+		if _, ok := r.Diff.Attributes[prefix+"#"]; ok {
+			exists = true
+		}
+	}
+
+	return FieldReadResult{
+		Value:  list,
+		Exists: exists,
+	}, nil
 }
 
 func (r *DiffFieldReader) readSet(
