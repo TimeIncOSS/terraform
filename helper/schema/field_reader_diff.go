@@ -244,11 +244,58 @@ func (r *DiffFieldReader) readSet(
 	// Create the set that will be our result
 	set := schema.ZeroValue().(*Set)
 
+	// Check if we're not supposed to remove it
+	v, ok := r.Diff.Attributes[prefix+"#"]
+	if ok && v.New == "0" {
+		return FieldReadResult{
+			Value:  set,
+			Exists: true, // not entirely sure what's the point of returning empty set, but...
+		}, nil
+	}
+
+	var originalSet *Set
+	var err error
+
+	// Compose common list of keys
+	var keys []string
+	diffContainsField := false
+	for k, _ := range r.Diff.Attributes {
+		if strings.HasPrefix(k, address[0]+".") {
+			diffContainsField = true
+		}
+		keys = append(keys, k)
+	}
+	if !diffContainsField {
+		return FieldReadResult{
+			Value:  set,
+			Exists: false,
+		}, nil
+	}
+	originalResult, err := r.Source.ReadField(address)
+	if err != nil {
+	}
+	if originalResult.Exists {
+		originalSet = originalResult.Value.(*Set)
+		originalMap := originalSet.Map()
+		for k, _ := range originalMap {
+			key := prefix + k
+			_, ok := r.Diff.Attributes[key]
+			if !ok {
+				keys = append(keys, key)
+			}
+		}
+	}
+
+	sort.Strings(keys)
+
 	// Go through the map and find all the set items
-	for k, d := range r.Diff.Attributes {
-		if d.NewRemoved {
-			// If the field is removed, we always ignore it
-			continue
+	for _, k := range keys {
+		d, ok := r.Diff.Attributes[k]
+		if ok {
+			if d.NewRemoved {
+				// If the field is removed, we always ignore it
+				continue
+			}
 		}
 		if !strings.HasPrefix(k, prefix) {
 			continue
