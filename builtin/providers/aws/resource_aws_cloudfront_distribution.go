@@ -17,6 +17,10 @@ func resourceAwsCloudFrontDistribution() *schema.Resource {
 		Update: resourceAwsCloudFrontDistributionUpdate,
 		Delete: resourceAwsCloudFrontDistributionDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"aliases": &schema.Schema{
 				Type:     schema.TypeSet,
