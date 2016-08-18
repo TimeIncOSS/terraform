@@ -568,6 +568,10 @@ func (m schemaMap) InternalValidate(topSchemaMap schemaMap) error {
 				return fmt.Errorf("%s: Set can only be set for TypeSet", k)
 			}
 
+			if v.Type == TypeSet && v.MaxItems == 1 {
+				return fmt.Errorf("%s: TypeList must be used for singleton fields (MaxItems: 1)", k)
+			}
+
 			switch t := v.Elem.(type) {
 			case *Resource:
 				if err := t.InternalValidate(topSchemaMap, true); err != nil {
