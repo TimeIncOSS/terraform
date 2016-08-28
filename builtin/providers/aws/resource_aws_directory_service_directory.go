@@ -413,10 +413,10 @@ func resourceAwsDirectoryServiceDirectoryRead(d *schema.ResourceData, meta inter
 	dir := out.DirectoryDescriptions[0]
 	log.Printf("[DEBUG] Received DS directory: %s", dir)
 
-	d.Set("access_url", *dir.AccessUrl)
-	d.Set("alias", *dir.Alias)
+	d.Set("access_url", dir.AccessUrl)
+	d.Set("alias", dir.Alias)
 	if dir.Description != nil {
-		d.Set("description", *dir.Description)
+		d.Set("description", dir.Description)
 	}
 
 	if *dir.Type == "ADConnector" {
@@ -424,17 +424,17 @@ func resourceAwsDirectoryServiceDirectoryRead(d *schema.ResourceData, meta inter
 	} else {
 		d.Set("dns_ip_addresses", schema.NewSet(schema.HashString, flattenStringList(dir.DnsIpAddrs)))
 	}
-	d.Set("name", *dir.Name)
+	d.Set("name", dir.Name)
 	if dir.ShortName != nil {
-		d.Set("short_name", *dir.ShortName)
+		d.Set("short_name", dir.ShortName)
 	}
 	if dir.Size != nil {
-		d.Set("size", *dir.Size)
+		d.Set("size", dir.Size)
 	}
-	d.Set("type", *dir.Type)
+	d.Set("type", dir.Type)
 	d.Set("vpc_settings", flattenDSVpcSettings(dir.VpcSettings))
 	d.Set("connect_settings", flattenDSConnectSettings(dir.DnsIpAddrs, dir.ConnectSettings))
-	d.Set("enable_sso", *dir.SsoEnabled)
+	d.Set("enable_sso", dir.SsoEnabled)
 
 	return nil
 }

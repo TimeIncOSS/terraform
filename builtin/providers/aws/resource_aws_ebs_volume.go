@@ -212,21 +212,21 @@ func resourceAwsEbsVolumeDelete(d *schema.ResourceData, meta interface{}) error 
 func readVolume(d *schema.ResourceData, volume *ec2.Volume) error {
 	d.SetId(*volume.VolumeId)
 
-	d.Set("availability_zone", *volume.AvailabilityZone)
+	d.Set("availability_zone", volume.AvailabilityZone)
 	if volume.Encrypted != nil {
-		d.Set("encrypted", *volume.Encrypted)
+		d.Set("encrypted", volume.Encrypted)
 	}
 	if volume.KmsKeyId != nil {
-		d.Set("kms_key_id", *volume.KmsKeyId)
+		d.Set("kms_key_id", volume.KmsKeyId)
 	}
 	if volume.Size != nil {
-		d.Set("size", *volume.Size)
+		d.Set("size", volume.Size)
 	}
 	if volume.SnapshotId != nil {
-		d.Set("snapshot_id", *volume.SnapshotId)
+		d.Set("snapshot_id", volume.SnapshotId)
 	}
 	if volume.VolumeType != nil {
-		d.Set("type", *volume.VolumeType)
+		d.Set("type", volume.VolumeType)
 	}
 
 	if volume.VolumeType != nil && *volume.VolumeType == "io1" {
@@ -235,7 +235,7 @@ func readVolume(d *schema.ResourceData, volume *ec2.Volume) error {
 		// from AWS, and prevent us from specifying 0 as a valid iops.
 		//   See https://github.com/hashicorp/terraform/pull/4146
 		if volume.Iops != nil {
-			d.Set("iops", *volume.Iops)
+			d.Set("iops", volume.Iops)
 		}
 	}
 

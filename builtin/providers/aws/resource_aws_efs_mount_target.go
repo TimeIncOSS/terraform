@@ -173,10 +173,10 @@ func resourceAwsEfsMountTargetRead(d *schema.ResourceData, meta interface{}) err
 	log.Printf("[DEBUG] Found EFS mount target: %#v", mt)
 
 	d.SetId(*mt.MountTargetId)
-	d.Set("file_system_id", *mt.FileSystemId)
-	d.Set("ip_address", *mt.IpAddress)
-	d.Set("subnet_id", *mt.SubnetId)
-	d.Set("network_interface_id", *mt.NetworkInterfaceId)
+	d.Set("file_system_id", mt.FileSystemId)
+	d.Set("ip_address", mt.IpAddress)
+	d.Set("subnet_id", mt.SubnetId)
+	d.Set("network_interface_id", mt.NetworkInterfaceId)
 
 	sgResp, err := conn.DescribeMountTargetSecurityGroups(&efs.DescribeMountTargetSecurityGroupsInput{
 		MountTargetId: aws.String(d.Id()),
