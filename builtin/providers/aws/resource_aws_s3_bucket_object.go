@@ -24,6 +24,27 @@ func resourceAwsS3BucketObject() *schema.Resource {
 		Update: resourceAwsS3BucketObjectPut,
 		Delete: resourceAwsS3BucketObjectDelete,
 
+		ListVersions: func(d *schema.ResourceData, meta interface{}) ([]string, error) {
+			conn := meta.(*AWSClient).s3conn
+			var versions = make([]string, 0)
+
+			input := s3.ListObjectVersionsInput{
+				Bucket: aws.String(d.Get("bucket").(string)),
+			}
+			_, err := conn.ListObjectVersionsPages(&input, func(page *s3.ListObjectVersionsOutput, lastPage bool) bool {
+				for _, v := range page.Versions {
+					versions = append(versions, *v.VersionId)
+				}
+				return !lastPage
+			})
+
+			return versions, err
+		},
+		SetVersion: func(d *schema.ResourceData, meta interface{}) error {
+			d.Set("version_id", d.Id())
+			return nil
+		},
+
 		Schema: map[string]*schema.Schema{
 			"bucket": &schema.Schema{
 				Type:     schema.TypeString,

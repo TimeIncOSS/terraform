@@ -20,6 +20,21 @@ func resourceAwsEcsTaskDefinition() *schema.Resource {
 		Read:   resourceAwsEcsTaskDefinitionRead,
 		Delete: resourceAwsEcsTaskDefinitionDelete,
 
+		ListVersions: func(d *schema.ResourceData, limit int, meta interface{}) ([]string, error) {
+			conn := meta.(*AWSClient).ecsconn
+			var versions = make([]string, 0)
+			out, err := conn.ListTaskDefinitionsPages(&ecs.ListTaskDefinitionsInput{
+				FamilyPrefix: aws.String(p.Get("family").(string)),
+			}, func(page *ecs.ListTaskDefinitionsOutput, lastPage bool) bool {
+				for _, arn := range page.TaskDefinitionArns {
+					versions = append(versions, *arn)
+				}
+				return !lastPage
+			})
+			return versions, err
+		},
+		SetVersion: schema.SetVersionPassthrough,
+
 		Schema: map[string]*schema.Schema{
 			"arn": &schema.Schema{
 				Type:     schema.TypeString,

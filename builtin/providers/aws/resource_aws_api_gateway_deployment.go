@@ -19,6 +19,25 @@ func resourceAwsApiGatewayDeployment() *schema.Resource {
 		Update: resourceAwsApiGatewayDeploymentUpdate,
 		Delete: resourceAwsApiGatewayDeploymentDelete,
 
+		ListVersions: func(d *schema.ResourceData, limit int, meta interface{}) ([]string, error) {
+			conn := meta.(*AWSClient).apigateway
+			var versions = make([]string, 0)
+
+			_, err := conn.GetDeploymentsPages(&apigateway.GetDeploymentsInput{
+				RestApiId: d.Get("rest_api_id").(string),
+			}, func(page *apigateway.GetDeploymentsOutput, lastPage bool) bool {
+				for _, i := range page.Items {
+					versions = append(versions, *i.Id)
+				}
+				return !lastPage
+			})
+
+			return versions, err
+		},
+		// TODO: Don't know how to change deployment ID for a given REST API
+		// See raised AWS support ticket
+		SetVersion: schema.SetVersionPassthrough,
+
 		Schema: map[string]*schema.Schema{
 			"rest_api_id": &schema.Schema{
 				Type:     schema.TypeString,

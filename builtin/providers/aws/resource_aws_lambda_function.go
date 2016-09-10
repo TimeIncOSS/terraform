@@ -31,6 +31,26 @@ func resourceAwsLambdaFunction() *schema.Resource {
 			},
 		},
 
+		ListVersions: func(d *schema.ResourceData, meta interface{}) ([]string, error) {
+			conn := meta.(*AWSClient).lambdaconn
+			var versions = make([]string, 0)
+
+			_, err := conn.ListObjectVersionsPages(&lambda.ListVersionsByFunctionInput{
+				FunctionName: aws.String(d.Get("function_name").(string)),
+			}, func(page *lambda.ListVersionsByFunctionOutput, lastPage bool) bool {
+				for _, v := range page.Versions {
+					versions = append(versions, *v.Version)
+				}
+				return !lastPage
+			})
+
+			return versions, err
+		},
+		SetVersion: func(d *schema.ResourceData, meta interface{}) error {
+			d.Set("version", d.Id())
+			return nil
+		},
+
 		Schema: map[string]*schema.Schema{
 			"filename": &schema.Schema{
 				Type:          schema.TypeString,
