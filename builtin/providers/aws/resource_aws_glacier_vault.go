@@ -54,13 +54,10 @@ func resourceAwsGlacierVault() *schema.Resource {
 			},
 
 			"access_policy": &schema.Schema{
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateJsonString,
-				StateFunc: func(v interface{}) string {
-					json, _ := normalizeJsonString(v)
-					return json
-				},
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateFunc:     validateJsonString,
+				DiffSuppressFunc: suppressEquivalentAwsPolicyDiffs,
 			},
 
 			"notification": &schema.Schema{
